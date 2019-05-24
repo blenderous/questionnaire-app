@@ -8,8 +8,9 @@ export class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { correctAnswers: 0, wrongAnswers: 0 }
+    this.state = { correctAnswers: 0, wrongAnswers: 0, allAttempted: false }
     this.updateScore = this.updateScore.bind(this);
+    this.validate = this.validate.bind(this);
   }
 
   updateScore(answerIndex, number) {
@@ -25,12 +26,47 @@ export class App extends React.Component {
 
   validate(e) {
     e.preventDefault();
-    console.log('validation comes here');
+    var inputGroup = document.getElementsByClassName('input-group');
+    
+    for (let index = 0; index < inputGroup.length; index++) {
+      // questionElement is the group of inputs under className 'input-group'
+      const questionElement = inputGroup[index];
+      var inputElements = questionElement.getElementsByTagName('input');
+      
+      // checking for checked inputs
+      var j=0;
+      var selected = false;
+      do {
+        if (inputElements[j].checked === true) {
+          selected = true;
+        }
+        j++;
+      } while (j < inputElements.length);
+      
+      // if no input is selected show question in red-ish color
+      var allAttempted = true;
+      var pTag = questionElement.getElementsByTagName('p')[0];
+      if (selected === false) {
+        if (pTag.className === '') {
+          pTag.className = 'alert';
+        }
+        allAttempted = false;
+      }
+      else {
+        pTag.className = '';
+      }
+
+    }
+
+    // update state of allAttempted to false or true
+    console.log(allAttempted);
+    this.setState({allAttempted: allAttempted });
+    
   }
 
   clear(e) {
     e.preventDefault();
-    var inputElements = document.getElementsByTagName("input");
+    var inputElements = document.getElementsByTagName('input');
     for (let index = 0; index < inputElements.length; index++) {
       const element = inputElements[index];
       element.checked = false;
