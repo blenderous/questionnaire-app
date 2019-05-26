@@ -11,7 +11,7 @@ export class OptionsList extends React.Component {
                     id={'input-' + this.props.number + i} 
                     value = {option}
                     alt = {'' + this.props.number + this.props.answerIndex}
-                    onChange = {this.props.onChange}
+                    // onChange = {this.props.onChange}
                     />
                 <label
                     htmlFor={'input-' + this.props.number + i}>

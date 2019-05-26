@@ -15,7 +15,7 @@ export class App extends React.Component {
     }
     // this.updateScore = this.updateScore.bind(this);
     this.validate = this.validate.bind(this);
-    this.checkAnswers = this.checkAnswers.bind(this);
+    // this.checkAnswers = this.checkAnswers.bind(this);
   }
 
   // updateScore(answerIndex, number) {
@@ -31,72 +31,76 @@ export class App extends React.Component {
 
   validate(e) {
     e.preventDefault();
-    var inputGroup = document.getElementsByClassName('input-group');
-    
-    for (let index = 0; index < inputGroup.length; index++) {
-      // questionElement is the group of inputs under className 'input-group'
-      const questionElement = inputGroup[index];
-      var inputElements = questionElement.getElementsByTagName('input');
+    var promise = new Promise(function(resolve,reject) {
+      var inputGroup = document.getElementsByClassName('input-group');
       
-      // checking for checked inputs
-      var j=0;
-      var selected = false;
-      do {
-        if (inputElements[j].checked === true) {
-          selected = true;
+      for (let index = 0; index < inputGroup.length; index++) {
+        // questionElement is the group of inputs under className 'input-group'
+        const questionElement = inputGroup[index];
+        var inputElements = questionElement.getElementsByTagName('input');
+        
+        // checking for checked inputs
+        var j=0;
+        var selected = false;
+        do {
+          if (inputElements[j].checked === true) {
+            selected = true;
+          }
+          j++;
+        } while (j < inputElements.length);
+        
+        // if no input is selected show question in red-ish color
+        var allAttempted = true;
+        var pTag = questionElement.getElementsByTagName('p')[0];
+        if (selected === false) {
+          if (pTag.className === '') {
+            pTag.className = 'alert';
+          }
+          allAttempted = false;
         }
-        j++;
-      } while (j < inputElements.length);
-      
-      // if no input is selected show question in red-ish color
-      var allAttempted = true;
-      var pTag = questionElement.getElementsByTagName('p')[0];
-      if (selected === false) {
-        if (pTag.className === '') {
-          pTag.className = 'alert';
+        else {
+          pTag.className = '';
         }
-        allAttempted = false;
-      }
-      else {
-        pTag.className = '';
+
       }
 
-    }
+      resolve(allAttempted)
+      // update state of allAttempted to false or true
+      // this.setState({allAttempted: allAttempted });
+    })
 
-    // update state of allAttempted to false or true
-    this.setState({allAttempted: allAttempted });
-    
+    var that = this;
+
+    promise.then(function(value){ 
+      // value = true
+      that.setState({allAttempted: value });
+      that.checkAnswers();
+      // 
+      console.log(that.state.correctAnswers);
+      console.log(that.state.wrongAnswers);
+    })
   }
 
-  checkAnswers(e) {
-    // input value 
-    var inputElement = e.target;
-    var inputNumber = inputElement.id.substr(inputElement.id.length - 2, 2);
-    var inputAlt = inputElement.alt;
-
-    if (inputNumber === inputAlt) {
-      this.setState({correctAnswers : this.state.correctAnswers + 1});
-      console.log('correct answers + 1');
-      // console.log(this.state.correctAnswers);
-    }
-    else {
-      this.setState({wrongAnswers : this.state.wrongAnswers + 1})
-      console.log('wrong answers + 1');
-
-      var questionNumber1 = inputNumber.substr(inputNumber.length - 2, 1);
-      var questionNumber2 = inputAlt.substr(inputAlt.length - 2, 1);
-      
-      // console.log(questionNumber1, questionNumber2)
-
-      if (questionNumber1 === questionNumber2) {
-        this.setState({correctAnswers : this.state.correctAnswers - 1})
-        console.log('correct answers - 1');
+  checkAnswers() {
+    var array = document.getElementsByTagName('input');
+    for (let index = 0; index < array.length; index++) {
+      const inputElement = array[index];
+      if (inputElement.checked) {
+        // inputNumber is the id of inputElement that is checked
+        // inputAlt is the id of the correct inputElement
+        var inputNumber = inputElement.id.substr(inputElement.id.length - 2, 2);
+        var inputAlt = inputElement.alt;
+        // if both are same, answer is correct
+        if (inputNumber === inputAlt) {
+          this.setState({correctAnswers : this.state.correctAnswers + 1})
+          console.log('correct answer');
+        }
+        // else answer is wrong
+        else {
+          this.setState({wrongAnswers : this.state.wrongAnswers + 1})
+          console.log('wrong answer');
+        }
       }
-      
-    }
-
-    if (this.state.allAttempted) {
-      // ...
     }
   }
 
@@ -117,7 +121,7 @@ export class App extends React.Component {
           number={i + 1} 
           answerIndex={question.answerIndex} 
           options={question.answerOptions}
-          onChange={this.checkAnswers}
+          // onChange={this.checkAnswers}
           />
       </div>
     );
