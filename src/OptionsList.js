@@ -9,11 +9,11 @@ export class OptionsList extends React.Component {
                     type="radio" 
                     name={'input-' + this.props.number} 
                     id={'input-' + this.props.number + i} 
-                    value={option}
+                    value = {option}
+                    alt = {'' + this.props.number + this.props.answerIndex}
+                    onChange = {this.props.onChange}
                     />
                 <label
-                    // onClick={this.updateScore(this.props.answerIndex, i)} 
-                    // onClick={this.props.onClick}
                     htmlFor={'input-' + this.props.number + i}>
                     {option}
                 </label>

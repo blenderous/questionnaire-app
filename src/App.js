@@ -8,21 +8,26 @@ export class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { correctAnswers: 0, wrongAnswers: 0, allAttempted: false }
-    this.updateScore = this.updateScore.bind(this);
+    this.state = { 
+      correctAnswers: 0, 
+      wrongAnswers: 0, 
+      allAttempted: false 
+    }
+    // this.updateScore = this.updateScore.bind(this);
     this.validate = this.validate.bind(this);
+    this.checkAnswers = this.checkAnswers.bind(this);
   }
 
-  updateScore(answerIndex, number) {
-      console.log('answerIndex ' + answerIndex);
-      console.log('number ' + number);
-      if (answerIndex === number) {
-        this.setState({correctAnswers : this.state.correctAnswers + 1});
-      }
-      else {
-        this.setState({wrongAnswers : this.state.wrongAnswers + 1});
-      }
-  }
+  // updateScore(answerIndex, number) {
+  //     console.log('answerIndex ' + answerIndex);
+  //     console.log('number ' + number);
+  //     if (answerIndex === number) {
+  //       this.setState({correctAnswers : this.state.correctAnswers + 1});
+  //     }
+  //     else {
+  //       this.setState({wrongAnswers : this.state.wrongAnswers + 1});
+  //     }
+  // }
 
   validate(e) {
     e.preventDefault();
@@ -59,9 +64,40 @@ export class App extends React.Component {
     }
 
     // update state of allAttempted to false or true
-    console.log(allAttempted);
     this.setState({allAttempted: allAttempted });
     
+  }
+
+  checkAnswers(e) {
+    // input value 
+    var inputElement = e.target;
+    var inputNumber = inputElement.id.substr(inputElement.id.length - 2, 2);
+    var inputAlt = inputElement.alt;
+
+    if (inputNumber === inputAlt) {
+      this.setState({correctAnswers : this.state.correctAnswers + 1});
+      console.log('correct answers + 1');
+      // console.log(this.state.correctAnswers);
+    }
+    else {
+      this.setState({wrongAnswers : this.state.wrongAnswers + 1})
+      console.log('wrong answers + 1');
+
+      var questionNumber1 = inputNumber.substr(inputNumber.length - 2, 1);
+      var questionNumber2 = inputAlt.substr(inputAlt.length - 2, 1);
+      
+      // console.log(questionNumber1, questionNumber2)
+
+      if (questionNumber1 === questionNumber2) {
+        this.setState({correctAnswers : this.state.correctAnswers - 1})
+        console.log('correct answers - 1');
+      }
+      
+    }
+
+    if (this.state.allAttempted) {
+      // ...
+    }
   }
 
   clear(e) {
@@ -81,6 +117,7 @@ export class App extends React.Component {
           number={i + 1} 
           answerIndex={question.answerIndex} 
           options={question.answerOptions}
+          onChange={this.checkAnswers}
           />
       </div>
     );
