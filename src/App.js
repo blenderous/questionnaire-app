@@ -14,21 +14,12 @@ export class App extends React.Component {
       wrongAnswers: 0, 
       allAttempted: false 
     }
-    // this.updateScore = this.updateScore.bind(this);
     this.validate = this.validate.bind(this);
-    // this.checkAnswers = this.checkAnswers.bind(this);
+    this.createBarChart = this.createBarChart.bind(this);
+    this.clear = this.clear.bind(this);
+    this.resetScore = this.resetScore.bind(this);
+    this.checkAnswers = this.checkAnswers.bind(this);
   }
-
-  // updateScore(answerIndex, number) {
-  //     console.log('answerIndex ' + answerIndex);
-  //     console.log('number ' + number);
-  //     if (answerIndex === number) {
-  //       this.setState({correctAnswers : this.state.correctAnswers + 1});
-  //     }
-  //     else {
-  //       this.setState({wrongAnswers : this.state.wrongAnswers + 1});
-  //     }
-  // }
 
   validate(e) {
     e.preventDefault();
@@ -51,7 +42,7 @@ export class App extends React.Component {
         } while (j < inputElements.length);
         
         // if no input is selected show question in red-ish color
-        var allAttempted = true;
+        var allAttempted = false;
         var pTag = questionElement.getElementsByTagName('p')[0];
         if (selected === false) {
           if (pTag.className === '') {
@@ -61,6 +52,7 @@ export class App extends React.Component {
         }
         else {
           pTag.className = '';
+          allAttempted = true;
         }
 
       }
@@ -74,47 +66,38 @@ export class App extends React.Component {
 
     promise.then(function(value){ 
       console.log(value);
-      // value = true
       that.setState({allAttempted: value });
-      that.checkAnswers();
-      
-      // console.log(that.state.correctAnswers);
-      // console.log(that.state.wrongAnswers);
 
-      // create bar chart here
-      that.createBarChart();
+      if (that.state.allAttempted === true) {
+        that.checkAnswers();
+        that.createBarChart(that.state.correctAnswers, that.state.wrongAnswers, false);
+      }
+      
     })
   }
 
-  createBarChart() {
+  createBarChart( correctAnswers, wrongAnswers, destroy) {
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: ['Wrong answers', 'Correct answers'],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                label: 'Result',
+                data: [wrongAnswers, correctAnswers],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
+                    'rgba(54, 162, 235, 0.2)'
                 ],
                 borderColor: [
                     'rgba(255, 99, 132, 1)',
                     'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]
         },
         options: {
+            responsive: true,
             scales: {
                 yAxes: [{
                     ticks: {
@@ -124,9 +107,19 @@ export class App extends React.Component {
             }
         }
     });
+
+    if (destroy) {
+      myChart.destroy();
+    }
+  }
+
+  resetScore() {
+    this.setState({correctAnswers: 0, wrongAnswers: 0});
+    // this.createBarChart( this.state.correctAnswers, this.state.wrongAnswers, true)
   }
 
   checkAnswers() {
+    this.resetScore();
     var array = document.getElementsByTagName('input');
     for (let index = 0; index < array.length; index++) {
       const inputElement = array[index];
@@ -151,11 +144,13 @@ export class App extends React.Component {
 
   clear(e) {
     e.preventDefault();
+    this.resetScore();
     var inputElements = document.getElementsByTagName('input');
     for (let index = 0; index < inputElements.length; index++) {
       const element = inputElements[index];
       element.checked = false;
     }
+    this.createBarChart(this.state.correctAnswers, this.state.wrongAnswers, true);
   }
   
   render() {
@@ -172,12 +167,16 @@ export class App extends React.Component {
     );
     return (
       <div className="App">
-        <form>
-          {questionsList}
-          <button onClick={this.validate} type="submit">Submit</button>
-          <button onClick={this.clear}>Clear</button>
-        </form>
-        <canvas id="myChart" width="400" height="400"></canvas>
+        <div className="col-1">
+          <form>
+            {questionsList}
+            <button onClick={this.validate} type="submit">Submit</button>
+            <button onClick={this.clear}>Clear</button>
+          </form>
+        </div>
+        <div className="col-2">
+          <canvas id="myChart" width="400" height="400"></canvas>
+        </div>
       </div>
     );
   }

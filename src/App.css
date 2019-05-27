@@ -2,6 +2,29 @@
   text-align: center;
 }
 
+.App::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+@media (min-width: 768px) {
+  .App {
+    display: table;
+  }
+  .App .col-1, .App .col-2 {
+    display: table-cell;
+    vertical-align: bottom;
+  }
+  .App .col-1 {
+    text-align: left;
+    padding: 10px;
+  }
+  .App .col-2 {
+    max-width: 400px;
+  }
+}
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 40vmin;
