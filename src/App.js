@@ -65,18 +65,17 @@ export class App extends React.Component {
     var that = this;
 
     promise.then(function(value){ 
-      console.log(value);
+      console.log('allAttempted: ', value);
       that.setState({allAttempted: value });
 
       if (that.state.allAttempted === true) {
         that.checkAnswers();
-        that.createBarChart(that.state.correctAnswers, that.state.wrongAnswers, false);
       }
-      
-    })
+    });
   }
 
   createBarChart( correctAnswers, wrongAnswers, destroy) {
+    console.log(wrongAnswers, correctAnswers);
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
@@ -103,7 +102,16 @@ export class App extends React.Component {
                     ticks: {
                         beginAtZero: true
                     }
-                }]
+                }],
+                xAxes: [{
+                  barPercentage: 0.5,
+                  barThickness: 100,
+                  maxBarThickness: 200,
+                  minBarLength: 2,
+                  gridLines: {
+                      offsetGridLines: true
+                  }
+              }]
             }
         }
     });
@@ -115,7 +123,6 @@ export class App extends React.Component {
 
   resetScore() {
     this.setState({correctAnswers: 0, wrongAnswers: 0});
-    // this.createBarChart( this.state.correctAnswers, this.state.wrongAnswers, true)
   }
 
   checkAnswers() {
@@ -140,6 +147,7 @@ export class App extends React.Component {
         }
       }
     }
+    this.createBarChart(this.state.correctAnswers, this.state.wrongAnswers, false);
   }
 
   clear(e) {
