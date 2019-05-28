@@ -3,7 +3,7 @@ import React from 'react';
 import './App.css';
 import { OptionsList } from './OptionsList';
 import questions from './Data';
-import Chart from 'chart.js';
+import { GoogleCharts } from "google-charts";
 
 export class App extends React.Component {
 
@@ -15,10 +15,10 @@ export class App extends React.Component {
       allAttempted: false 
     }
     this.validate = this.validate.bind(this);
-    this.createBarChart = this.createBarChart.bind(this);
     this.clear = this.clear.bind(this);
     this.resetScore = this.resetScore.bind(this);
     this.checkAnswers = this.checkAnswers.bind(this);
+    this.createChart = this.createChart.bind(this);
   }
 
   validate(e) {
@@ -70,51 +70,9 @@ export class App extends React.Component {
 
       if (that.state.allAttempted === true) {
         that.checkAnswers();
+        that.createChart(that.state.correctAnswers, that.state.wrongAnswers);
       }
     });
-  }
-
-  createBarChart( correctAnswers, wrongAnswers, destroy) {
-    console.log(wrongAnswers, correctAnswers);
-    if (!destroy) {
-      var ctx = document.getElementById('myChart').getContext('2d');
-      this.myChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: ['Wrong Answers', 'Correct answers'],
-              datasets: [{
-                  label: 'Answers',
-                  data: [wrongAnswers, correctAnswers],
-                  backgroundColor: [
-                      'rgba(255, 99, 132, 0.2)',
-                      'rgba(54, 162, 235, 0.2)'
-                  ],
-                  borderColor: [
-                      'rgba(255, 99, 132, 1)',
-                      'rgba(54, 162, 235, 1)',
-                  ],
-                  borderWidth: 1
-              }]
-          },
-          options: {
-              responsive: true,
-              scales: {
-                  yAxes: [{
-                    ticks: {
-                      beginAtZero: true,
-                      steps: 5,
-                      stepValue: 1,
-                      max: 5 //max value for the chart is 60
-                      }
-                  }],
-          }
-        }
-      });
-    }
-    else {
-      console.log('command to destroy');
-      this.myChart.destroy();
-    }
   }
 
   resetScore() {
@@ -143,7 +101,6 @@ export class App extends React.Component {
         }
       }
     }
-    this.createBarChart(this.state.correctAnswers, this.state.wrongAnswers, false);
   }
 
   clear(e) {
@@ -154,7 +111,30 @@ export class App extends React.Component {
       const element = inputElements[index];
       element.checked = false;
     }
-    this.createBarChart(0, 0, true);
+    this.createChart(0, 0);
+  }
+  
+  // data = [
+  //   ["Questions", "Answers", { role: "style" }],
+  //   ["Correct Answers", 0, "#e0dc3c"], // RGB value
+  //   ["Wrong Answers", 0, "#ff4014"], // English color name (changed)
+  // ];
+
+  createChart(correctAnswers, wrongAnswers) {
+    //Load the charts library with a callback
+    GoogleCharts.load(drawChart);
+    
+    function drawChart() {
+    
+        // Standard google charts functionality is available as GoogleCharts.api after load
+        const data = GoogleCharts.api.visualization.arrayToDataTable([
+          ["Questions", "Answers", { role: "style" }],
+          ["Correct Answers", correctAnswers, "#e0dc3c"], // RGB value
+          ["Wrong Answers", wrongAnswers, "#ff4014"], // English color name (changed)
+        ]);
+        const column_chart_1 = new GoogleCharts.api.visualization.ColumnChart(document.getElementById('chart1'));
+        column_chart_1.draw(data);
+    }
   }
   
   render() {
@@ -179,7 +159,7 @@ export class App extends React.Component {
           </form>
         </div>
         <div className="col-2">
-          <canvas id="myChart" width="400" height="400"></canvas>
+          <div id="chart1"></div>
         </div>
       </div>
     );

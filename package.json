@@ -7,6 +7,7 @@
     "gh-pages": "^2.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-google-charts": "^3.0.13",
     "react-scripts": "3.0.1"
   },
   "scripts": {
@@ -32,5 +33,8 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "http://blenderous.github.io/questionnaire-app"
+  "homepage": "http://blenderous.github.io/questionnaire-app",
+  "devDependencies": {
+    "google-charts": "^2.0.0"
+  }
 }
