@@ -76,48 +76,44 @@ export class App extends React.Component {
 
   createBarChart( correctAnswers, wrongAnswers, destroy) {
     console.log(wrongAnswers, correctAnswers);
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Wrong answers', 'Correct answers'],
-            datasets: [{
-                label: 'Result',
-                data: [wrongAnswers, correctAnswers],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }],
-                xAxes: [{
-                  barPercentage: 0.5,
-                  barThickness: 100,
-                  maxBarThickness: 200,
-                  minBarLength: 2,
-                  gridLines: {
-                      offsetGridLines: true
-                  }
+    if (!destroy) {
+      var ctx = document.getElementById('myChart').getContext('2d');
+      this.myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: ['Wrong Answers', 'Correct answers'],
+              datasets: [{
+                  label: 'Answers',
+                  data: [wrongAnswers, correctAnswers],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                  ],
+                  borderWidth: 1
               }]
-            }
+          },
+          options: {
+              responsive: true,
+              scales: {
+                  yAxes: [{
+                    ticks: {
+                      beginAtZero: true,
+                      steps: 5,
+                      stepValue: 1,
+                      max: 5 //max value for the chart is 60
+                      }
+                  }],
+          }
         }
-    });
-
-    if (destroy) {
-      myChart.destroy();
+      });
+    }
+    else {
+      console.log('command to destroy');
+      this.myChart.destroy();
     }
   }
 
@@ -158,7 +154,7 @@ export class App extends React.Component {
       const element = inputElements[index];
       element.checked = false;
     }
-    this.createBarChart(this.state.correctAnswers, this.state.wrongAnswers, true);
+    this.createBarChart(0, 0, true);
   }
   
   render() {
