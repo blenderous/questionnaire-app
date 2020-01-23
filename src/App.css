@@ -58,3 +58,7 @@
 .input-group p.alert {
   color: rgb(240, 89, 89);
 }
+
+form > div.input-group {
+  margin-bottom: 20px;
+}
